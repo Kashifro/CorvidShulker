@@ -1,4 +1,7 @@
 #folders
 build/
+headers/
 #script
 build.sh
+#test
+test.txt
