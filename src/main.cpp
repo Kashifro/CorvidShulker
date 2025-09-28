@@ -16,16 +16,21 @@ class Level;
 
 //ptr type
 using ItemStackBase_toString_t = std::string(*)(ItemStackBase* self);
+using ItemStackBase_toDebugString_t = std::string(*)(ItemStackBase* self);
 using Shulker_appendHover_t = void(*)(ShulkerBoxBlockItem* self, const ItemStackBase& stack, Level& level, std::string& out, bool flag);
 
 //org ptr
 ItemStackBase_toString_t ItemStackBase_toString_orig = nullptr;
+ItemStackBase_toDebugString_t ItemStackBase_toDebugString_orig = nullptr;
 Shulker_appendHover_t ShulkerBoxBlockItem_appendFormattedHovertext_orig = nullptr;
 
 //hook string prolly don't need it 
 std::string ItemStackBase_toString_hook(ItemStackBase* self) {
 }
 
+//hook DebugString another mindless hook
+std::string ItemStackBase_toDebugString_hook(ItemStackBase* self) {
+}
 //hook append
 void ShulkerBoxBlockItem_appendFormattedHovertext_hook(ShulkerBoxBlockItem* self, const ItemStackBase& stack, Level& level, std::string& out, bool flag) {
     if (ShulkerBoxBlockItem_appendFormattedHovertext_orig)
@@ -33,15 +38,19 @@ void ShulkerBoxBlockItem_appendFormattedHovertext_hook(ShulkerBoxBlockItem* self
 
     out.append("\n§2Preview Goes Here\n");
 
-    if (ItemStackBase_toString_orig) {
-        std::string itemInfo = ItemStackBase_toString_orig(const_cast<ItemStackBase*>(&stack));
-        out.append("\n§5Item ID: " + itemInfo);
-    } else {
-        out.append("\n§5Item ID: unknown");
+    // if (ItemStackBase_toString_orig) {
+    //     std::string itemInfo = ItemStackBase_toString_orig(const_cast<ItemStackBase*>(&stack));
+    //     out.append("\n§5Item ID: " + itemInfo);
+    // } else {
+    //     out.append("\n§5Item ID: unknown");
+    // }
+      if (ItemStackBase_toDebugString_orig) {
+        std::string debug = ItemStackBase_toDebugString_orig(const_cast<ItemStackBase*>(&stack));
+        out.append("\n§6NBT/Extra Info:\n" + debug); // too much extra info and well it kinda is string hook but well debug lol xD
     }
     //rest of the logic
-}
 
+}
 
 
 extern "C" [[gnu::visibility("default")]] void mod_preinit() {}
@@ -76,16 +85,21 @@ extern "C" [[gnu::visibility("default")]] void mod_init() {
     auto ZTS13ItemStackBase = hat::find_pattern(range1, hat::object_to_signature("13ItemStackBase")).get();
     auto _ZTI13ItemStackBase = hat::find_pattern(range2, hat::object_to_signature(ZTS13ItemStackBase)).get() - sizeof(void*);
     auto _ZTV13ItemStackBase = hat::find_pattern(range2, hat::object_to_signature(_ZTI13ItemStackBase)).get() + sizeof(void*);
-    void** vt1 = reinterpret_cast<void**>(_ZTV13ItemStackBase);
+    
 
     //slot5
     
     //slot6
+    void** vt1 = reinterpret_cast<void**>(_ZTV13ItemStackBase);
     ItemStackBase_toString_orig =
        reinterpret_cast<ItemStackBase_toString_t>(vt1[6]);
     vt1[6] = reinterpret_cast<void*>(&ItemStackBase_toString_hook);
     printf("[ShulkerPreview] Are we sure about this huh\n"); // another mindless out
 
     //slot7
-
+     void** vt2 = reinterpret_cast<void**>(_ZTV13ItemStackBase);
+    ItemStackBase_toDebugString_orig = 
+       reinterpret_cast<ItemStackBase_toDebugString_t>(vt2[7]);
+    vt2[7] = reinterpret_cast<void*>(&ItemStackBase_toDebugString_hook);
+    printf("[ShulkerPreview] Again???? \n "); //lol i gotta stop this goes nowhere
 }
