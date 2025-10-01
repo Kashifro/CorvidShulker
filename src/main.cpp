@@ -10,7 +10,6 @@
 #include <libhat.hpp>
 
 //fwd dec
-class ItemStackBase;
 class ShulkerBoxBlockItem;
 class Level;
 
@@ -64,11 +63,11 @@ extern "C" [[gnu::visibility("default")]] void mod_init() {
     auto ZTS19ShulkerBoxBlockItem = hat::find_pattern(range1, hat::object_to_signature("19ShulkerBoxBlockItem")).get();
     auto _ZTI19ShulkerBoxBlockItem = hat::find_pattern(range2, hat::object_to_signature(ZTS19ShulkerBoxBlockItem)).get() - sizeof(void*);
     auto _ZTV19ShulkerBoxBlockItem = hat::find_pattern(range2, hat::object_to_signature(_ZTI19ShulkerBoxBlockItem)).get() + sizeof(void*);
-    void** vt0 = reinterpret_cast<void**>(_ZTV19ShulkerBoxBlockItem);
+    void** vtshulk53 = reinterpret_cast<void**>(_ZTV19ShulkerBoxBlockItem);
     //append slot 53
     ShulkerBoxBlockItem_appendFormattedHovertext_orig =
-        reinterpret_cast<Shulker_appendHover_t>(vt0[53]);
-    vt0[53] = reinterpret_cast<void*>(&ShulkerBoxBlockItem_appendFormattedHovertext_hook);
+        reinterpret_cast<Shulker_appendHover_t>(vtshulk53[53]);
+    vtshulk53[53] = reinterpret_cast<void*>(&ShulkerBoxBlockItem_appendFormattedHovertext_hook);
 
 
     //ItemStackBase
@@ -76,9 +75,11 @@ extern "C" [[gnu::visibility("default")]] void mod_init() {
     auto _ZTI13ItemStackBase = hat::find_pattern(range2, hat::object_to_signature(ZTS13ItemStackBase)).get() - sizeof(void*);
     auto _ZTV13ItemStackBase = hat::find_pattern(range2, hat::object_to_signature(_ZTI13ItemStackBase)).get() + sizeof(void*);
     //slot7
-     void** vt2 = reinterpret_cast<void**>(_ZTV13ItemStackBase);
+     void** vtIstack07 = reinterpret_cast<void**>(_ZTV13ItemStackBase);
     ItemStackBase_toDebugString_orig = 
-       reinterpret_cast<ItemStackBase_toDebugString_t>(vt2[7]);
-    vt2[7] = reinterpret_cast<void*>(&ItemStackBase_toDebugString_hook);
+       reinterpret_cast<ItemStackBase_toDebugString_t>(vtIstack07[7]);
+    vtIstack07[7] = reinterpret_cast<void*>(&ItemStackBase_toDebugString_hook);
+
+    //prolly have to drop it idk
 
 }
