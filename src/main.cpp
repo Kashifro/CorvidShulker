@@ -33,12 +33,12 @@ std::string ItemStackBase_toDebugString_hook(void *stack)
     std::byte *s = reinterpret_cast<std::byte *>(stack);
 
     // offset from slot7 pseudocode unf hardcoded
-    void *mItem = *reinterpret_cast<void **>(s + 8);
+    // void *mItem = *reinterpret_cast<void **>(s + 8);
     void *mUserData = *reinterpret_cast<void **>(s + 16);
-    void *mBlock = *reinterpret_cast<void **>(s + 24);
+    // void *mBlock = *reinterpret_cast<void **>(s + 24);
 
-    out.append("\n mItem: " + std::format("{:p}", mItem));
-    out.append("\n mBlock: " + std::format("{:p}", mBlock));
+    // out.append("\n mItem: " + std::format("{:p}", mItem));
+    // out.append("\n mBlock: " + std::format("{:p}", mBlock));
     out.append("\n mUserData: " + std::format("{:p}", mUserData));
     return out;
 }
@@ -53,19 +53,22 @@ void ShulkerBoxBlockItem_appendFormattedHovertext_hook(
     if (ShulkerBoxBlockItem_appendFormattedHovertext_orig)
         ShulkerBoxBlockItem_appendFormattedHovertext_orig(self, stack, level, out, flag);
 
-    std::byte *s = reinterpret_cast<std::byte *>(stack);
+    auto *itemStack = reinterpret_cast<ItemStackBase *>(stack);
 
-    void *mItem = *reinterpret_cast<void **>(s + 8);
-    void *mUserData = *reinterpret_cast<void **>(s + 16); // is 0x0 when empty shulker and returns ptr if not
-    void *mBlock = *reinterpret_cast<void **>(s + 24);
-    // pure addresses hopefully
+    if (!itemStack->mUserData)
+    {
+        out.append("\n§7Empty\n");
+    };
+    if (!itemStack->mUserData->contains("Items"))
+        return;
 
-    if (!mUserData)
-        return; // only display if has data
+    // void* mItem  = itemStack->mItem;
+    // void* mBlock = itemStack->mBlock;
+    void *mUserData = itemStack->mUserData;
 
-    out.append("\n mItem: " + std::format("{:p}", mItem));   // kinda sitting around here for now
-    out.append("\n mBlock: " + std::format("{:p}", mBlock)); // - - -- - - - same actually this returns name as in minecraft:shulker_box but we only have ptr
-    out.append("\n mUserData: " + std::format("{:p}", mUserData));
+    // out.append("\n mItem: " + std::format("{:p}", mItem));
+    // out.append("\n mBlock: " + std::format("{:p}", mBlock));
+    out.append("\n mUserData: " + std::format("{:p}", mUserData));// raw ptr
 }
 
 extern "C" [[gnu::visibility("default")]] void mod_preinit() {}
