@@ -1,6 +1,7 @@
 #folders
 build/
 headers/
+.vscode/
 #script
 build.sh
 #test

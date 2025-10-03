@@ -20,7 +20,7 @@ FetchContent_Declare(properties-parser
 FetchContent_MakeAvailable(libhat properties-parser)
 
 
-add_library(shulke SHARED src/main.cpp
+add_library(shulke SHARED src/main.cpp 
 )
 target_include_directories(shulke PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src/ 
