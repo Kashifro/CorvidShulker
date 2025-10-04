@@ -112,6 +112,14 @@ extern "C" [[gnu::visibility("default")]] void mod_init()
     ItemStackBase_toDebugString_orig =
         reinterpret_cast<ItemStackBase_toDebugString_t>(vtIstack07[7]);
     vtIstack07[7] = reinterpret_cast<void *>(&ItemStackBase_toDebugString_hook);
-
     // prolly have to drop it idk or not
+
+    //HoverRenderer, this is hopefully the same as in Better Inv
+    auto _ZTS13HoverRenderer = hat::find_pattern(range1, hat::object_to_signature("13HoverRenderer")).get();
+    auto _ZTI13HoverRenderer = hat::find_pattern(range2, hat::object_to_signature(_ZTS13HoverRenderer)).get() - sizeof(void *);
+    auto _ZTV13HoverRenderer = hat::find_pattern(range2, hat::object_to_signature(_ZTI13HoverRenderer)).get() + sizeof(void *);
+    void **vtHR = reinterpret_cast<void **>(_ZTV13HoverRenderer);
+    // idk the slot yet or it doesnt have xD
+    // somefunc_orig = reinterpret_cast<somefunc_t>(vtHR[??]);
+    // vtHR[??] = reinterpret_cast<void *>(&somefunc_hook);
 }
